@@ -1,0 +1,13 @@
+.toolBar {
+  width: 15%;
+  height: 100%;
+  border-right: solid #575757 0.4vh;
+  display: flex;
+  flex-direction: column;
+  gap: 10%;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: nowrap;
+  padding-top: 3%;
+  padding-bottom: 2%;
+}

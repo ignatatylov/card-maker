@@ -1,0 +1,14 @@
+.body {
+  width: 20%;
+  height: 100%;
+  align-items: center;
+  display: flex;
+}
+
+.text {
+  padding-left: 15%;
+  text-align: center;
+  font-size: 4vh;
+  font-weight: bold;
+  color: white;
+}
