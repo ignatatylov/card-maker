@@ -32,7 +32,7 @@ function BurgerMenu(props: Props) {
         try {
           const result = reader.result;
           console.log("result = ", result);
-          if (typeof result === "string") {
+          if (typeof result === "string" && result != null) {
             const parsedResult = JSON.parse(result);
             console.log("parsedResult = ", parsedResult);
             props.editorChange(parsedResult);

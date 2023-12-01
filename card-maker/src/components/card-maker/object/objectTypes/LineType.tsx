@@ -1,5 +1,6 @@
 import { CSSProperties } from "react";
 import { LineBlock } from "../../../../types";
+import useDraggable from "../../utils/useDragAndDrop";
 
 type Props = {
   object: LineBlock;
@@ -7,10 +8,11 @@ type Props = {
 };
 
 function LineType({ object, style }: Props) {
+  const { position, onMouseDown, onMouseMove, onMouseUp } = useDraggable();
   const styleObj: CSSProperties = {
     position: "absolute",
-    top: object.y,
-    left: object.x,
+    top: object.y ? `${position.y}px` : "auto",
+    left: object.x ? `${position.x}px` : "auto",
     width: object.width,
     height: 0,
     transform: `rotate(${0}deg)`,
@@ -33,7 +35,14 @@ function LineType({ object, style }: Props) {
     }
   }
   styleObj.transform = `rotate(${angle}deg)`;
-  return <div style={styleObj}></div>;
+  return (
+    <div
+      style={styleObj}
+      onMouseDown={onMouseDown}
+      onMouseMove={onMouseMove}
+      onMouseUp={onMouseUp}
+    ></div>
+  );
 }
 
 export { LineType };

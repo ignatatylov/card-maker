@@ -1,5 +1,6 @@
 import { CSSProperties } from "react";
 import { ArtBlock } from "../../../../types";
+import useDraggable from "../../utils/useDragAndDrop";
 
 type Props = {
   object: ArtBlock;
@@ -9,12 +10,13 @@ type Props = {
 };
 
 function ArtType({ object, style, selected, selectedChange }: Props) {
+  const { position, onMouseDown, onMouseMove, onMouseUp } = useDraggable();
   const styleObj: CSSProperties = {
     position: "absolute",
     width: object.width,
     height: object.height,
-    top: object.y,
-    left: object.x,
+    top: object.y ? `${position.y}px` : "auto",
+    left: object.x ? `${position.x}px` : "auto",
     transform: `rotate(${object.rotation}deg)`,
     backgroundImage: "",
     backgroundRepeat: "no-repeat",
@@ -48,6 +50,9 @@ function ArtType({ object, style, selected, selectedChange }: Props) {
   return (
     <div
       style={styleObj}
+      onMouseDown={onMouseDown}
+      onMouseMove={onMouseMove}
+      onMouseUp={onMouseUp}
       onClick={() => {
         const newSelectedObjects = [...(selected ?? [])];
         newSelectedObjects.push(object.id);
