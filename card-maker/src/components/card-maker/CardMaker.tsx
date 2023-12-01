@@ -28,18 +28,45 @@ type Props = {
   editor: Editor;
 };
 
+type hadleClickProps = {
+  event: React.KeyboardEvent<HTMLDivElement>;
+  sel?: Array<number> | undefined;
+};
+
 function CardMaker({ editor }: Props) {
   const [edit, editorChange] = useState<Editor>(editor);
   const [canv, canvasChange] = useState(edit.canvas);
   const [sel, selectedChange] = useState(edit.selectedObjects);
 
+  const handleClick = ({ event, sel }: hadleClickProps) => {
+    if (event.key === "Escape") {
+      selectedChange([]);
+    }
+    if (event.key === "Delete") {
+      const newCanvas = { ...canv };
+      if (sel != undefined) {
+        newCanvas.objects.map((object) => {
+          if (sel.includes(object.id)) {
+            newCanvas.objects.splice(newCanvas.objects.indexOf(object), 1);
+          }
+        });
+        canvasChange(newCanvas);
+      }
+    }
+  };
   useEffect(() => {
     canvasChange(edit.canvas);
     selectedChange(edit.selectedObjects);
   }, [edit]);
 
   return (
-    <div className={styles.cardMaker}>
+    <div
+      className={styles.cardMaker}
+      onKeyDown={(event) => {
+        handleClick({ event, sel });
+      }}
+      tabIndex={0}
+    >
       <TopBar editor={edit} editorChange={editorChange}></TopBar>
       <div className={styles.container}>
         <ToolBar

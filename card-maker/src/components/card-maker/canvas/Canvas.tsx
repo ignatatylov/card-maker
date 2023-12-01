@@ -1,4 +1,4 @@
-import { CSSProperties, MouseEvent } from "react";
+import { CSSProperties } from "react";
 import { Object } from "../object/Object";
 import styles from "./Canvas.module.css";
 import { CanvasType } from "../../../types";
@@ -36,7 +36,7 @@ function Canvas({ canvas, selectedObjects, selectedChange }: CanvasProps) {
     <div
       className={styles.body}
       style={canvasObj}
-      onClick={(event: MouseEvent) => {
+      onClick={(event: React.MouseEvent) => {
         let flag = false;
         canvas.objects.map((object) => {
           if (
@@ -48,7 +48,7 @@ function Canvas({ canvas, selectedObjects, selectedChange }: CanvasProps) {
             flag = true;
           }
         });
-        if (!flag) {
+        if (flag) {
           selectedChange([]);
         }
       }}
