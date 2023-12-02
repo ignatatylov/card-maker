@@ -38,6 +38,8 @@ function CardMaker({ editor }: Props) {
   const [canv, canvasChange] = useState(edit.canvas);
   const [sel, selectedChange] = useState(edit.selectedObjects);
 
+  const [isOnImgInput, isOnImgInputChange] = useState(false);
+
   const handleClick = ({ event, sel }: hadleClickProps) => {
     if (event.key === "Escape") {
       selectedChange([]);
@@ -59,6 +61,10 @@ function CardMaker({ editor }: Props) {
     selectedChange(edit.selectedObjects);
   }, [edit]);
 
+  useEffect(() => {
+    isOnImgInputChange(isOnImgInput);
+  });
+
   return (
     <div
       className={styles.cardMaker}
@@ -67,12 +73,17 @@ function CardMaker({ editor }: Props) {
       }}
       tabIndex={0}
     >
-      <TopBar editor={edit} editorChange={editorChange}></TopBar>
+      <TopBar
+        editor={edit}
+        editorChange={editorChange}
+        isOnImgInput={isOnImgInput}
+      ></TopBar>
       <div className={styles.container}>
         <ToolBar
           elements={toolBarElemets}
           canvas={canv}
           canvasChange={canvasChange}
+          isOnImgInputChange={isOnImgInputChange}
         ></ToolBar>
         <div className={styles.canvasField}>
           <button className={styles.changeBackground}>
@@ -80,8 +91,11 @@ function CardMaker({ editor }: Props) {
           </button>
           <Canvas
             canvas={canv}
+            canvasChange={canvasChange}
             selectedObjects={sel}
             selectedChange={selectedChange}
+            isOnImgInput={isOnImgInput}
+            isOnImgInputChange={isOnImgInputChange}
           ></Canvas>
         </div>
       </div>

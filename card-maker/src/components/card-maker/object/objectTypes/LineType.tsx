@@ -8,7 +8,10 @@ type Props = {
 };
 
 function LineType({ object, style }: Props) {
-  const { position, onMouseDown, onMouseMove, onMouseUp } = useDraggable();
+  const { position, onMouseDown, onMouseMove, onMouseUp } = useDraggable(
+    object.x,
+    object.y,
+  );
   const styleObj: CSSProperties = {
     position: "absolute",
     top: object.y ? `${position.y}px` : "auto",

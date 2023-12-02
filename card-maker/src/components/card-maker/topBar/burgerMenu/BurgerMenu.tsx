@@ -7,6 +7,7 @@ type Props = {
   menuActive: boolean;
   setMenuActive: (menuActive: boolean) => void;
   editorChange(edit: Editor): void;
+  isOnImgInput: boolean;
 };
 
 function BurgerMenu(props: Props) {
@@ -29,18 +30,20 @@ function BurgerMenu(props: Props) {
     reader.addEventListener(
       "load",
       () => {
-        try {
-          const result = reader.result;
-          console.log("result = ", result);
-          if (typeof result === "string" && result != null) {
-            const parsedResult = JSON.parse(result);
-            console.log("parsedResult = ", parsedResult);
-            props.editorChange(parsedResult);
-          } else {
-            console.log("Ошибка декодирования");
+        if (!props.isOnImgInput) {
+          try {
+            const result = reader.result;
+            console.log("result = ", result);
+            if (typeof result === "string" && result != null) {
+              const parsedResult = JSON.parse(result);
+              console.log("parsedResult = ", parsedResult);
+              props.editorChange(parsedResult);
+            } else {
+              console.log("Ошибка декодирования");
+            }
+          } catch {
+            alert("reading err");
           }
-        } catch {
-          alert("reading err");
         }
       },
       false,
@@ -55,11 +58,10 @@ function BurgerMenu(props: Props) {
           type="file"
           onChange={openFile}
           name="file"
-          id="field__file"
+          id="field__file_menu"
           className={styles.input__file}
-          multiple
         />
-        <label htmlFor="field__file" className={styles.content__p}>
+        <label htmlFor="field__file_menu" className={styles.content__p}>
           Загрузить как
         </label>
         <p onClick={saveFile} className={styles.content__p}>

@@ -10,7 +10,10 @@ type Props = {
 };
 
 function ArtType({ object, style, selected, selectedChange }: Props) {
-  const { position, onMouseDown, onMouseMove, onMouseUp } = useDraggable();
+  const { position, onMouseDown, onMouseMove, onMouseUp } = useDraggable(
+    object.x,
+    object.y,
+  );
   const styleObj: CSSProperties = {
     position: "absolute",
     width: object.width,

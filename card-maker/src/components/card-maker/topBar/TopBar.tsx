@@ -9,9 +9,10 @@ import { useState } from "react";
 type Props = {
   editor: Editor;
   editorChange(edit: Editor): void;
+  isOnImgInput: boolean;
 };
 
-function TopBar({ editor, editorChange }: Props) {
+function TopBar({ editor, editorChange, isOnImgInput }: Props) {
   const [menuActive, setMenuActive] = useState(false);
   return (
     <div>
@@ -28,6 +29,7 @@ function TopBar({ editor, editorChange }: Props) {
         menuActive={menuActive}
         setMenuActive={setMenuActive}
         editorChange={editorChange}
+        isOnImgInput={isOnImgInput}
       ></BurgerMenu>
     </div>
   );

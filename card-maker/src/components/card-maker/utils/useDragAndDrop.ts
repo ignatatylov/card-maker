@@ -1,8 +1,8 @@
 import { useState, useCallback, useEffect } from "react";
 
-const useDraggable = () => {
+const useDraggable = (x: number, y: number) => {
   const [isDragging, setIsDragging] = useState(false);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [position, setPosition] = useState({ x: x, y: y });
   const [offset, setOffset] = useState({ x: 0, y: 0 });
 
   const onMouseDown = useCallback(

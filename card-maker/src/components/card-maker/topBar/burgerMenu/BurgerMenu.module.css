@@ -16,6 +16,7 @@
 }
 
 .menu.active {
+  position: fixed;
   transform: translateY(0);
 }
 .menu__content{
