@@ -1,7 +1,12 @@
 import { CSSProperties, ChangeEvent } from "react";
 import { Object } from "../object/Object";
 import styles from "./Canvas.module.css";
-import { CanvasType, ImageBlock } from "../../../types";
+import { ArtBlock, CanvasType, ImageBlock, Sticker } from "../../../types";
+
+type ArtElemets = {
+  src: string;
+  shape: string;
+};
 
 type CanvasProps = {
   canvas: CanvasType;
@@ -10,6 +15,9 @@ type CanvasProps = {
   selectedChange: (sel: Array<number> | undefined) => void;
   isOnImgInput: boolean;
   isOnImgInputChange(isOnImgInput: boolean): void;
+  isOnArtInput: boolean;
+  isOnArtInputChange(isOnArtInput: boolean): void;
+  artElemets: ArtElemets[];
 };
 
 function Canvas({
@@ -19,6 +27,9 @@ function Canvas({
   selectedChange,
   isOnImgInput,
   isOnImgInputChange,
+  isOnArtInput,
+  isOnArtInputChange,
+  artElemets,
 }: CanvasProps) {
   const canvasObj: CSSProperties = {
     width: canvas.width,
@@ -41,84 +52,83 @@ function Canvas({
     //   canvasObj.background = canvas.backType.src;
     // }
   }
-  // const imgObj: ImageBlock = {
-  //   id: canvas.objects.length,
-  //   type: "image",
-  //   width: 100,
-  //   height: 100,
-  //   x: Math.abs(canvas.width / 2),
-  //   y: Math.abs(canvas.height / 2),
-  //   rotation: 0,
-  //   path: {
-  //     scrType: "imageLink",
-  //     src: "./static/img.png",
-  //   },
-  // };
+  const imgObj: ImageBlock = {
+    id: canvas.objects.length,
+    type: "image",
+    width: 100,
+    height: 100,
+    x: Math.abs(canvas.width / 2),
+    y: Math.abs(canvas.height / 2),
+    rotation: 0,
+    path: {
+      scrType: "imageLink",
+      src: "./static/img.png",
+    },
+  };
 
-  // const openImgFile = (event: ChangeEvent<HTMLInputElement>) => {
-  //   if (!event.target.files) {
-  //     return null;
-  //   }
-  //   const file = event.target.files[0];
-  //   const reader = new FileReader();
-  //   reader.addEventListener(
-  //     "load",
-  //     () => {
-  //       try {
-  //         const result = reader.result;
-  //         console.log("result = ", result);
-  //         if (typeof result === "string" && result != null) {
-  //           console.log(URL.createObjectURL(file));
-  //           const newCanvas = { ...canvas };
-  //           const img: HTMLImageElement = new Image(100, 100);
-  //           img.src = URL.createObjectURL(file);
-  //           img.crossOrigin = "use-credentials";
-  //           const canvasImg = document.createElement("canvas");
-  //           const ctx = canvasImg.getContext("2d");
-  //           canvasImg.width = 100;
-  //           canvasImg.height = 100;
-  //           if (ctx) {
-  //             ctx.drawImage(img, 0, 0);
-  //           }
-  //           const uri = canvasImg.toDataURL("image/png", 1.0);
-  //           console.log(uri);
-  //           imgObj.path.src = uri;
-  //           newCanvas.objects.push(imgObj);
-  //           canvasChange(newCanvas);
-  //           isOnImgInputChange(false);
-  //         } else {
-  //           console.log("Ошибка декодирования");
-  //         }
-  //       } catch {
-  //         alert("reading err");
-  //       }
-  //     },
-  //     false,
-  //   );
-  //   reader.readAsText(file);
-  // };
-  return (
-    <div
-      className={styles.body}
-      style={canvasObj}
-      onClick={(event: React.MouseEvent) => {
-        let flag = false;
-        canvas.objects.map((object) => {
-          if (
-            object.x <= event.clientX &&
-            event.clientX <= object.x + object.width &&
-            object.y <= event.clientY &&
-            event.clientY <= object.y + (object.height ?? object.width)
-          ) {
-            flag = true;
+  const openImgFile = async (event: ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files || event.target.files.length === 0) {
+      return;
+    }
+
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    reader.addEventListener("load", async () => {
+      try {
+        const result = reader.result;
+
+        if (typeof result === "string" && result !== null) {
+          const newCanvas = { ...canvas };
+          const img = new Image();
+          img.src = URL.createObjectURL(file);
+          img.crossOrigin = "use-credentials";
+
+          await new Promise((resolve) => {
+            img.onload = resolve;
+          });
+
+          const canvasImg = document.createElement("canvas");
+          const ctx = canvasImg.getContext("2d");
+
+          const blockWidth = 100; // Установите ширину блока
+          const blockHeight = 100; // Установите высоту блока
+
+          const scaleFactor = Math.min(
+            blockWidth / img.width,
+            blockHeight / img.height,
+          );
+
+          canvasImg.width = img.width * scaleFactor;
+          canvasImg.height = img.height * scaleFactor;
+
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, canvasImg.width, canvasImg.height);
           }
-        });
-        if (flag) {
-          selectedChange([]);
+
+          const uri = canvasImg.toDataURL("image/png", 1.0);
+
+          console.log("Result URI:", uri);
+
+          imgObj.path.src = uri;
+          newCanvas.objects.push(imgObj);
+          canvasChange(newCanvas);
+          isOnImgInputChange(false);
+        } else {
+          console.error("Ошибка декодирования");
         }
-      }}
-    >
-      {/* <div className={isOnImgInput ? styles.input_active : styles.input}>
+      } catch (error) {
+        console.error("Reading error:", error);
+        // Дополнительная обработка ошибки, если необходимо
+      }
+    });
+
+    reader.readAsDataURL(file);
+  };
+
+  return (
+    <div className={styles.body} style={canvasObj}>
+      <div className={isOnImgInput ? styles.input_active : styles.input}>
         <input
           type="file"
           onChange={openImgFile}
@@ -126,10 +136,68 @@ function Canvas({
           id="field__file"
           className={styles.input__file}
         />
-        <label htmlFor="field__file" className={styles.content__p}>
+        <label
+          htmlFor="field__file"
+          className={
+            isOnImgInput ? styles.content__p_active : styles.content__p
+          }
+        >
           Загрузить картинку
         </label>
-      </div> */}
+      </div>
+
+      <div className={isOnArtInput ? styles.input_active : styles.input}>
+        {artElemets.map((artElement, index) => (
+          <div
+            key={index}
+            style={
+              isOnArtInput
+                ? {
+                    background: `url(${artElement.src}) no-repeat center center/cover fixed`,
+                    padding: "5%",
+                    margin: "3%",
+                    cursor: "pointer",
+                  }
+                : {}
+            }
+            onClick={() => {
+              const artObj: ArtBlock = {
+                id: canvas.objects.length,
+                type: "art",
+                width: 100,
+                height: 100,
+                x: Math.abs(canvas.width / 2),
+                y: Math.abs(canvas.height / 2),
+                rotation: 0,
+                shape: Sticker.STAR,
+              };
+              if (artElement.shape == "Star") {
+                artObj.shape = Sticker.STAR;
+              }
+              if (artElement.shape == "Flower") {
+                artObj.shape = Sticker.FLOWER;
+              }
+              if (artElement.shape == "Heart") {
+                artObj.shape = Sticker.HEART;
+              }
+              if (artElement.shape == "Snowman") {
+                artObj.shape = Sticker.SNOWMAN;
+              }
+              if (artElement.shape == "Emoji") {
+                artObj.shape = Sticker.EMOJI;
+              }
+              if (artElement.shape == "Winter") {
+                artObj.shape = Sticker.WINTER;
+              }
+              const newCanvas = { ...canvas };
+              newCanvas.objects.push(artObj);
+              canvasChange(newCanvas);
+              isOnArtInputChange(false);
+            }}
+          ></div>
+        ))}
+      </div>
+
       {canvas.objects.map((object) => (
         <Object
           selected={selectedObjects}

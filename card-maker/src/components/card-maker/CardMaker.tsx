@@ -19,8 +19,35 @@ const toolBarElemets = [
     text: "арт",
   },
   {
-    src: "./static/line.png",
-    text: "линия",
+    src: "./static/filter.png",
+    text: "фильтр",
+  },
+];
+
+const artElemets = [
+  {
+    src: "./static/star.svg",
+    shape: "Star",
+  },
+  {
+    src: "./static/flower.svg",
+    shape: "Flower",
+  },
+  {
+    src: "./static/heart.svg",
+    shape: "Heart",
+  },
+  {
+    src: "./static/snowman.svg",
+    shape: "Snowman",
+  },
+  {
+    src: "./static/emoji.svg",
+    shape: "Emoji",
+  },
+  {
+    src: "./static/winter.svg",
+    shape: "Winter",
   },
 ];
 
@@ -40,20 +67,21 @@ function CardMaker({ editor }: Props) {
 
   const [isOnImgInput, isOnImgInputChange] = useState(false);
 
+  const [isOnArtInput, isOnArtInputChange] = useState(false);
+
   const handleClick = ({ event, sel }: hadleClickProps) => {
     if (event.key === "Escape") {
       selectedChange([]);
     }
     if (event.key === "Delete") {
       const newCanvas = { ...canv };
-      if (sel != undefined) {
-        newCanvas.objects.map((object) => {
-          if (sel.includes(object.id)) {
-            newCanvas.objects.splice(newCanvas.objects.indexOf(object), 1);
-          }
-        });
+      if (sel) {
+        newCanvas.objects = newCanvas.objects.filter(
+          (object) => !sel.includes(object.id),
+        );
         canvasChange(newCanvas);
       }
+      canvasChange(newCanvas);
     }
   };
   useEffect(() => {
@@ -63,6 +91,10 @@ function CardMaker({ editor }: Props) {
 
   useEffect(() => {
     isOnImgInputChange(isOnImgInput);
+  });
+
+  useEffect(() => {
+    isOnArtInputChange(isOnArtInput);
   });
 
   return (
@@ -84,6 +116,7 @@ function CardMaker({ editor }: Props) {
           canvas={canv}
           canvasChange={canvasChange}
           isOnImgInputChange={isOnImgInputChange}
+          isOnArtInputChange={isOnArtInputChange}
         ></ToolBar>
         <div className={styles.canvasField}>
           <button className={styles.changeBackground}>
@@ -96,6 +129,9 @@ function CardMaker({ editor }: Props) {
             selectedChange={selectedChange}
             isOnImgInput={isOnImgInput}
             isOnImgInputChange={isOnImgInputChange}
+            isOnArtInput={isOnArtInput}
+            isOnArtInputChange={isOnArtInputChange}
+            artElemets={artElemets}
           ></Canvas>
         </div>
       </div>

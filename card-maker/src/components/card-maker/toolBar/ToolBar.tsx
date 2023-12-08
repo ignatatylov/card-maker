@@ -12,6 +12,7 @@ type ToolBarElemetsType = {
   canvas: CanvasType;
   canvasChange: (canv: CanvasType) => void;
   isOnImgInputChange: (isOnImgInput: boolean) => void;
+  isOnArtInputChange: (isOnArtInput: boolean) => void;
 };
 
 function ToolBar({
@@ -19,6 +20,7 @@ function ToolBar({
   canvas,
   canvasChange,
   isOnImgInputChange,
+  isOnArtInputChange,
 }: ToolBarElemetsType) {
   return (
     <div className={styles.toolBar}>
@@ -30,6 +32,7 @@ function ToolBar({
           canvas={canvas}
           canvasChange={canvasChange}
           isOnImgInputChange={isOnImgInputChange}
+          isOnArtInputChange={isOnArtInputChange}
         />
       ))}
     </div>

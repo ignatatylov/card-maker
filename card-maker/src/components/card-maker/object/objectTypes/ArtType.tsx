@@ -58,6 +58,8 @@ function ArtType({ object, style, selected, selectedChange }: Props) {
       onMouseUp={onMouseUp}
       onClick={() => {
         const newSelectedObjects = [...(selected ?? [])];
+        object.x = position.x;
+        object.y = position.y;
         newSelectedObjects.push(object.id);
         selectedChange(newSelectedObjects);
       }}

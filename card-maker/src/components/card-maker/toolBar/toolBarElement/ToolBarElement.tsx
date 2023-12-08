@@ -1,10 +1,4 @@
-import {
-  ArtBlock,
-  CanvasType,
-  ImageBlock,
-  Sticker,
-  TextBlock,
-} from "../../../../types";
+import { ArtBlock, CanvasType, Sticker, TextBlock } from "../../../../types";
 import { ToolBarElementType } from "../ToolBar";
 import styles from "./ToolBarElement.module.css";
 
@@ -14,6 +8,7 @@ type Props = {
   canvas: CanvasType;
   canvasChange(canv: CanvasType): void;
   isOnImgInputChange(isOnImgInput: boolean): void;
+  isOnArtInputChange(isOnArtInput: boolean): void;
 };
 
 function ToolBarElement({
@@ -22,6 +17,7 @@ function ToolBarElement({
   canvas,
   canvasChange,
   isOnImgInputChange,
+  isOnArtInputChange,
 }: Props) {
   const button = {
     height: height.toString() + "%",
@@ -42,30 +38,6 @@ function ToolBarElement({
     underline: false,
     color: "black",
   };
-  const artObj: ArtBlock = {
-    id: canvas.objects.length,
-    type: "art",
-    width: 100,
-    height: 100,
-    x: Math.abs(canvas.width / 2),
-    y: Math.abs(canvas.height / 2),
-    rotation: 0,
-    shape: Sticker.STAR,
-  };
-
-  const imgObj: ImageBlock = {
-    id: canvas.objects.length,
-    type: "image",
-    width: 100,
-    height: 100,
-    x: Math.abs(canvas.width / 2),
-    y: Math.abs(canvas.height / 2),
-    rotation: 0,
-    path: {
-      scrType: "imageLink",
-      src: "./static/img.png",
-    },
-  };
 
   return (
     <div
@@ -73,14 +45,15 @@ function ToolBarElement({
       onClick={() => {
         const newCanvas = { ...canvas };
         if (element.text == "картинка") {
-          newCanvas.objects.push(imgObj);
-          // isOnImgInputChange(true);
+          isOnArtInputChange(false);
+          isOnImgInputChange(true);
         }
         if (element.text == "текст") {
           newCanvas.objects.push(textObj);
         }
         if (element.text == "арт") {
-          newCanvas.objects.push(artObj);
+          isOnImgInputChange(false);
+          isOnArtInputChange(true);
         }
         canvasChange(newCanvas);
       }}
